@@ -49,6 +49,14 @@ const pool = new Pool({
 pool.connect()
 
 
+
+  app.use(basicAuth({
+    users: { 'staff': 'latte' },
+    challenge: true,
+    realm: 'Imb4T3st4pp',
+	}))
+
+
 // Add headers
 app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -319,6 +327,8 @@ basicAuth({
   });
 
 
+  
+  
 	
 	app.get('/orders/all', adminAuth , (req,result) => {
 		pool.query('SELECT * FROM public.devorders', (err, res) => {
@@ -406,7 +416,7 @@ app.post('/updateAvg', (req,res) => {
 		res.send('Date:' +date+" has been updated");
 	})
 	
-	app.get('/getStats', (req,res) => {
+	app.get('/getStats', myAuth, (req,res) => {
 		
 		var thisQuery = "SELECT * FROM public.stats order BY date;"
 
@@ -461,9 +471,10 @@ app.post('/updateAvg', (req,res) => {
 	})
 	 
 // All remaining requests return the React app, so it can handle routing.
-  app.get('*', function(request, response) {
-    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-  });
+
+ app.get('*', function(request, response) {
+     response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+   });
 	
 	
 //START SERVER
